@@ -39,6 +39,68 @@ async function refreshCsrf() {
 refreshCsrf();
 setInterval(refreshCsrf, 60 * 60 * 1000);
 
+// Allow CORS for the browser extension (origin is "chrome-extension://…")
+app.use((req, res, next) => {
+  const origin = req.headers.origin || '';
+  if (origin.startsWith('chrome-extension://') || origin.startsWith('moz-extension://')) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  }
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
+  next();
+});
+
+// Extension one-click connect: validate session then store it in the app's session store
+app.post('/api/connect', async (req, res) => {
+  const { session } = req.body;
+  if (!session) return res.status(400).json({ error: 'session required' });
+
+  const cookieStr = cachedCsrf
+    ? `LEETCODE_SESSION=${session}; csrftoken=${cachedCsrf}`
+    : `LEETCODE_SESSION=${session}`;
+
+  try {
+    const r = await fetch('https://leetcode.com/api/problems/all/', {
+      headers: {
+        Cookie: cookieStr,
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        Referer: 'https://leetcode.com/',
+        Accept: 'application/json',
+      },
+    });
+    if (!r.ok) return res.status(r.status).json({ error: `LeetCode returned ${r.status}` });
+    const data = await r.json();
+    if (!data.user_name) return res.status(401).json({ error: 'Session invalid or expired' });
+
+    // Store session in a server-side variable so the frontend can read it on load
+    pendingSession = { session, username: data.user_name, storedAt: Date.now() };
+    console.log(`[connect] extension connected: ${data.user_name}`);
+    res.json({ username: data.user_name });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Extension disconnect
+app.post('/api/disconnect', (req, res) => {
+  pendingSession = null;
+  res.json({ ok: true });
+});
+
+// Frontend polls this to pick up the session the extension just pushed
+app.get('/api/pending-session', (req, res) => {
+  if (pendingSession) {
+    const s = pendingSession;
+    pendingSession = null; // consume it
+    res.json(s);
+  } else {
+    res.json(null);
+  }
+});
+
+let pendingSession = null;
+
 // Primary sync endpoint — uses LeetCode's REST problems list, which reliably
 // returns per-user solved status. The GraphQL questionList.status field silently
 // returns null when CSRF isn't fully validated, making problems appear unsolved.
