@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Build output — run `npm run build` locally to regenerate
+frontend/dist/
+release/dist/
+
+# Compiled executable — download from GitHub Releases instead
+release/*.exe
+*.exe
+
+# Logs & debug
+npm-debug.log*
+*.log
+
+# Editor
+.vscode/
+.idea/
+*.suo
+*.user
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env files — never commit secrets
+.env
+.env.local
+.env.*
