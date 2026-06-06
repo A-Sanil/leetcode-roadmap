@@ -52,16 +52,29 @@ Then open [http://localhost:3001](http://localhost:3001).
 
 ## 🔑 Connecting Your LeetCode Account
 
-The app walks you through it on first launch, but here's the gist:
+### Option A — Browser extension (recommended, one click)
 
-1. Click **Open LeetCode ↗** and sign in to your account
-2. Press **F12** → **Application** tab → **Cookies** → `https://leetcode.com`
-3. Find the row named `LEETCODE_SESSION` and copy its value
+`LEETCODE_SESSION` is an `HttpOnly` cookie — JavaScript on the page can't read it. The companion extension uses the browser's `cookies` API (which *can* access HttpOnly cookies) to push it to the app automatically.
+
+1. Open `chrome://extensions` (or `edge://extensions`)
+2. Enable **Developer mode** (top-right toggle)
+3. Click **Load unpacked** and select the `extension/` folder next to the exe
+4. Pin the 🧩 extension to your toolbar
+5. Make sure you're logged into [leetcode.com](https://leetcode.com)
+6. Click the extension icon → **Connect Account** → done
+
+### Option B — Manual (fallback)
+
+If you'd rather not install the extension:
+
+1. Click **Open LeetCode ↗** in the app and sign in
+2. Press `F12` → **Application** tab → **Cookies** → `https://leetcode.com`
+3. Find the row named `LEETCODE_SESSION`, double-click its value and copy it
 4. Paste it into the app and click **Connect & Sync →**
 
-Your cookie is stored only in `localStorage` and is only ever sent to `leetcode.com` through the local proxy. It is **never** sent anywhere else.
+---
 
-Sync happens automatically every 30 minutes while the app is open, or you can hit the **↻ Sync** button in the header at any time.
+Your cookie is stored only in `localStorage` and is only ever sent to `leetcode.com` through the local proxy — never anywhere else. Sync runs automatically every 30 minutes, or hit **↻ Sync** to force it.
 
 ---
 
