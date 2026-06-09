@@ -22,11 +22,13 @@ A local desktop app that mirrors the [NeetCode 150 roadmap](https://neetcode.io/
 
 ## 🚀 Quick Start
 
-### Option A — Download the exe (recommended)
+### Option A — Download the zip (recommended)
 
-1. Go to [**Releases**](../../releases/latest) and download `LeetCode Roadmap.exe`
-2. Place it in a folder (e.g. `C:\Tools\LeetCode Roadmap\`) — the `dist\` folder must stay next to the exe
-3. Double-click `LeetCode Roadmap.exe` — it starts the server and opens your browser automatically
+1. Go to [**Releases**](../../releases/latest) and download **`LeetCode-Roadmap-vX.X.X.zip`**
+2. **Extract** the zip — you'll get a folder containing `LeetCode Roadmap.exe` and a `dist\` subfolder (both are required)
+3. Double-click `LeetCode Roadmap.exe` inside the extracted folder — it starts the server and opens your browser automatically
+
+> ⚠️ Don't move the `.exe` out of the folder — it needs `dist\` sitting right next to it to serve the frontend.
 
 ### Option B — Run from source
 
